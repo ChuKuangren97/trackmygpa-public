@@ -78,13 +78,13 @@ The app is a client-rendered SPA. The React frontend talks directly to Supabase:
 
 ```mermaid
 flowchart TB
-    Browser[React SPA<br/>pages / context / lib] --> Auth[Supabase Auth<br/>email+password<br/>sessions]
-    Browser -->|PostgREST<br/>owner-only RLS| Profiles[(profiles<br/>1 row per user)]
-    Browser -->|PostgREST<br/>owner-only RLS| Semesters[(semesters<br/>user_id)]
-    Browser -->|PostgREST<br/>owner-only RLS| Courses[(courses<br/>user_id + semester_id)]
-    Browser -->|rpc check/redeem<br/>not shipped: owner implements| Invite[Invite-code RPCs<br/>contract documented]
-    Browser -->|rpc delete_user()<br/>SECURITY DEFINER<br/>auth.uid() only| DelAcct[Deletes own rows<br/>+ auth.users row]
-    GPA[src/lib/gpa.js<br/>5.0 / 4.0 scales] -.-> Browser
+    Browser["React SPA<br/>pages / context / lib"] --> Auth["Supabase Auth<br/>email plus password<br/>sessions"]
+    Browser -->|"PostgREST, owner-only RLS"| Profiles[("profiles<br/>1 row per user")]
+    Browser -->|"PostgREST, owner-only RLS"| Semesters[("semesters<br/>user_id")]
+    Browser -->|"PostgREST, owner-only RLS"| Courses[("courses<br/>user_id plus semester_id")]
+    Browser -->|"RPC check/redeem<br/>not shipped, owner implements"| Invite["Invite-code RPCs<br/>contract documented"]
+    Browser -->|"RPC delete_user<br/>SECURITY DEFINER, caller only"| DelAcct["Deletes own rows<br/>plus auth.users row"]
+    GPA["src/lib/gpa.js<br/>5.0 / 4.0 scales"] -.-> Browser
 ```
 
 Table relationships: `profiles.id` **is** the auth user id; `semesters.user_id` and `courses.user_id` reference `auth.users(id)`; `courses.semester_id` references `semesters(id)` with cascade delete. Full DDL, indexes, and policies live in `supabase/schema.sql`; the function in `supabase/functions.sql`; the walkthrough in `supabase/README.md`.
